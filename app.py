@@ -7,7 +7,7 @@ from datetime import date, datetime, timedelta
 
 from dotenv import load_dotenv
 import requests
-from flask import Flask, Response
+from flask import Flask, Response, render_template
 
 TEMPLATE_PATH = Path("bustime-template.svg")
 
@@ -47,8 +47,8 @@ def get_bus_times():
     return times
 
 
-@app.route("/")
-def index():
+@app.route("/bus_display")
+def bus_display():
     bustimes = get_bus_times()
 
     ns = {"svg": "http://www.w3.org/2000/svg"}
@@ -66,8 +66,10 @@ def index():
 
     res = ET.tostring(root, encoding="unicode", xml_declaration=True)
     return Response(res, content_type="image/svg+xml")
-    #return Response(content=res, media_type="image/svg+xml", headers={"Refresh": "10"})
 
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     print(get_bus_times())
